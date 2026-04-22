@@ -1,4 +1,5 @@
-export type EventType = 'knock' | 'conversation' | 'sale'
+export const VALID_TYPES = ['knock', 'conversation', 'sale'] as const
+export type EventType = typeof VALID_TYPES[number]
 
 export interface EventRow {
   type: EventType

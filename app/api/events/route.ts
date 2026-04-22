@@ -1,8 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
-import { type EventType } from '@/lib/types'
+import { VALID_TYPES, type EventType } from '@/lib/types'
 import { NextRequest, NextResponse } from 'next/server'
-
-const VALID_TYPES: EventType[] = ['knock', 'conversation', 'sale']
 
 export async function POST(request: NextRequest) {
   const supabase = await createClient()
@@ -11,8 +9,15 @@ export async function POST(request: NextRequest) {
   } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const { type } = await request.json()
-  if (!VALID_TYPES.includes(type)) {
+  let body: { type?: unknown }
+  try {
+    body = await request.json()
+  } catch {
+    return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 })
+  }
+  const { type } = body
+
+  if (!VALID_TYPES.includes(type as EventType)) {
     return NextResponse.json({ error: 'Invalid type' }, { status: 400 })
   }
 
@@ -29,8 +34,15 @@ export async function DELETE(request: NextRequest) {
   } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const { type } = await request.json()
-  if (!VALID_TYPES.includes(type)) {
+  let body: { type?: unknown }
+  try {
+    body = await request.json()
+  } catch {
+    return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 })
+  }
+  const { type } = body
+
+  if (!VALID_TYPES.includes(type as EventType)) {
     return NextResponse.json({ error: 'Invalid type' }, { status: 400 })
   }
 
