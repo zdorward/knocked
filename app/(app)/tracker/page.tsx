@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
+import { redirect } from 'next/navigation'
 import { TrackerClient } from './TrackerClient'
 import { type Counts } from '@/lib/types'
 
@@ -7,6 +8,8 @@ export default async function TrackerPage() {
   const {
     data: { user },
   } = await supabase.auth.getUser()
+
+  if (!user) redirect('/login')
 
   const today = new Date().toISOString().split('T')[0]
 

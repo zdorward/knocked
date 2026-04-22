@@ -15,21 +15,27 @@ export function TrackerClient({ initialCounts, userName }: Props) {
 
   async function handleIncrement(type: EventType) {
     setCounts((prev) => ({ ...prev, [type]: prev[type] + 1 }))
-    await fetch('/api/events', {
+    const res = await fetch('/api/events', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ type }),
     })
+    if (!res.ok) {
+      setCounts((prev) => ({ ...prev, [type]: prev[type] - 1 }))
+    }
   }
 
   async function handleUndo(type: EventType) {
     if (counts[type] === 0) return
     setCounts((prev) => ({ ...prev, [type]: prev[type] - 1 }))
-    await fetch('/api/events', {
+    const res = await fetch('/api/events', {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ type }),
     })
+    if (!res.ok) {
+      setCounts((prev) => ({ ...prev, [type]: prev[type] + 1 }))
+    }
   }
 
   const today = new Date().toLocaleDateString('en-US', {
