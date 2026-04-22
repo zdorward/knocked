@@ -1,7 +1,7 @@
 export type EventType = 'knock' | 'conversation' | 'sale'
 
 export interface EventRow {
-  type: string
+  type: EventType
   created_at: string
 }
 
