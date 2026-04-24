@@ -4,6 +4,7 @@ import {
   salesByDow,
   conversionRatesByWeek,
   lifetimeConversionRates,
+  contractStats,
 } from '@/lib/queries'
 
 // All timestamps in UTC. June 2 2026 is a Tuesday (dow=2). June 3 is a Wednesday (dow=3).
@@ -71,4 +72,61 @@ test('conversionRatesByWeek: returns one entry per week', () => {
   expect(result).toHaveLength(1)
   expect(result[0].knockToSale).toBe(67)  // 2/3
   expect(result[0].convoToSale).toBe(100) // 2/2
+})
+
+test('contractStats: returns 0 for both when no events', () => {
+  const result = contractStats([])
+  expect(result.avgContractValue).toBe(0)
+  expect(result.revenuePerDoor).toBe(0)
+})
+
+test('contractStats: returns 0 when there are knocks but no sales with values', () => {
+  const events = [
+    { type: 'knock', created_at: '2026-06-02T09:00:00Z' },
+    { type: 'sale', created_at: '2026-06-02T10:00:00Z', contract_value: null },
+  ] as any
+  const result = contractStats(events)
+  expect(result.avgContractValue).toBe(0)
+  expect(result.revenuePerDoor).toBe(0)
+})
+
+test('contractStats: calculates avgContractValue correctly', () => {
+  const events = [
+    { type: 'sale', created_at: '2026-06-02T10:00:00Z', contract_value: 200 },
+    { type: 'sale', created_at: '2026-06-02T11:00:00Z', contract_value: 400 },
+  ] as any
+  const result = contractStats(events)
+  expect(result.avgContractValue).toBe(300)
+})
+
+test('contractStats: calculates revenuePerDoor correctly', () => {
+  const events = [
+    { type: 'knock', created_at: '2026-06-02T09:00:00Z' },
+    { type: 'knock', created_at: '2026-06-02T09:30:00Z' },
+    { type: 'sale', created_at: '2026-06-02T10:00:00Z', contract_value: 200 },
+  ] as any
+  const result = contractStats(events)
+  // $200 total / 2 knocks = $100
+  expect(result.revenuePerDoor).toBe(100)
+})
+
+test('contractStats: revenuePerDoor is 0 when no knocks', () => {
+  const events = [
+    { type: 'sale', created_at: '2026-06-02T10:00:00Z', contract_value: 300 },
+  ] as any
+  const result = contractStats(events)
+  expect(result.revenuePerDoor).toBe(0)
+})
+
+test('contractStats: excludes null contract_value from avgContractValue', () => {
+  const events = [
+    { type: 'knock', created_at: '2026-06-02T09:00:00Z' },
+    { type: 'sale', created_at: '2026-06-02T10:00:00Z', contract_value: 300 },
+    { type: 'sale', created_at: '2026-06-02T11:00:00Z', contract_value: null },
+  ] as any
+  const result = contractStats(events)
+  // Only the $300 sale counts for avg (null excluded)
+  expect(result.avgContractValue).toBe(300)
+  // revenuePerDoor uses total value of valued sales / knocks: $300 / 1 knock = $300
+  expect(result.revenuePerDoor).toBe(300)
 })

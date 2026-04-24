@@ -79,3 +79,24 @@ export function lifetimeConversionRates(events: EventRow[]): {
     convoToSale: convos > 0 ? Math.round((sales / convos) * 100) : 0,
   }
 }
+
+export function contractStats(events: EventRow[]): {
+  avgContractValue: number
+  revenuePerDoor: number
+} {
+  const valuedSales = events.filter(
+    (e) => e.type === 'sale' && e.contract_value != null
+  )
+  const knocks = events.filter((e) => e.type === 'knock').length
+  const totalValue = valuedSales.reduce((sum, e) => sum + (e.contract_value ?? 0), 0)
+
+  const avgContractValue =
+    valuedSales.length > 0
+      ? Math.round((totalValue / valuedSales.length) * 100) / 100
+      : 0
+
+  const revenuePerDoor =
+    knocks > 0 ? Math.round((totalValue / knocks) * 100) / 100 : 0
+
+  return { avgContractValue, revenuePerDoor }
+}
