@@ -29,9 +29,23 @@ export async function middleware(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
-  const isLoginPage = request.nextUrl.pathname.startsWith('/login')
+  const isPublicPath =
+    request.nextUrl.pathname.startsWith('/login') ||
+    request.nextUrl.pathname.startsWith('/signup') ||
+    request.nextUrl.pathname.startsWith('/forgot-password') ||
+    request.nextUrl.pathname.startsWith('/reset-password') ||
+    request.nextUrl.pathname.startsWith('/auth/callback')
 
-  if (!user && !isLoginPage) {
+  // Only bounce authenticated users away from login/signup/forgot-password.
+  // Do NOT include /reset-password or /auth/callback — the password reset flow
+  // sets a session in /auth/callback and immediately redirects to /reset-password,
+  // so we must let authenticated users reach that page.
+  const isRedirectOnAuthPath =
+    request.nextUrl.pathname.startsWith('/login') ||
+    request.nextUrl.pathname.startsWith('/signup') ||
+    request.nextUrl.pathname.startsWith('/forgot-password')
+
+  if (!user && !isPublicPath) {
     const redirectResponse = NextResponse.redirect(new URL('/login', request.url))
     supabaseResponse.cookies.getAll().forEach((cookie) => {
       redirectResponse.cookies.set(cookie.name, cookie.value, cookie)
@@ -39,7 +53,7 @@ export async function middleware(request: NextRequest) {
     return redirectResponse
   }
 
-  if (user && isLoginPage) {
+  if (user && isRedirectOnAuthPath) {
     const redirectResponse = NextResponse.redirect(new URL('/tracker', request.url))
     supabaseResponse.cookies.getAll().forEach((cookie) => {
       redirectResponse.cookies.set(cookie.name, cookie.value, cookie)
