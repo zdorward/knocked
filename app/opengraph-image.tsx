@@ -32,36 +32,24 @@ export default function Image() {
             position: 'relative',
           }}
         >
-          {/* Door frame */}
+          {/* Door panel — no frame, floats on background */}
           <div
             style={{
               position: 'absolute',
               inset: 0,
-              backgroundColor: '#92400e',
-              borderRadius: 6,
-            }}
-          />
-          {/* Door panel */}
-          <div
-            style={{
-              position: 'absolute',
-              top: 13,
-              left: 13,
-              right: 13,
-              bottom: 13,
               backgroundColor: '#d97706',
-              borderRadius: 2,
+              borderRadius: 10,
             }}
           />
           {/* Knob */}
           <div
             style={{
               position: 'absolute',
-              right: 26,
-              top: 105,
-              width: 20,
-              height: 20,
-              borderRadius: 10,
+              right: 22,
+              top: 98,
+              width: 24,
+              height: 24,
+              borderRadius: 12,
               backgroundColor: '#fde68a',
             }}
           />

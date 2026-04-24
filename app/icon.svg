@@ -1,18 +1,14 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80">
   <style>
-    .frame { fill: #92400e; }
     .door  { fill: #d97706; }
     .knob  { fill: #fde68a; }
     @media (prefers-color-scheme: light) {
-      .frame { fill: #78350f; }
       .door  { fill: #b45309; }
-      .knob  { fill: #d97706; }
+      .knob  { fill: #92400e; }
     }
   </style>
-  <!-- Door frame -->
-  <rect x="16" y="4" width="48" height="74" rx="3" class="frame" shape-rendering="crispEdges"/>
-  <!-- Door panel -->
-  <rect x="21" y="9" width="38" height="69" rx="1" class="door" shape-rendering="crispEdges"/>
+  <!-- Door panel (no frame — floats on transparency) -->
+  <rect x="14" y="4" width="52" height="74" rx="4" class="door" shape-rendering="crispEdges"/>
   <!-- Knob -->
-  <circle cx="51" cy="47" r="5" class="knob"/>
+  <circle cx="54" cy="44" r="6" class="knob"/>
 </svg>
