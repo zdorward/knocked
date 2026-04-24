@@ -2,11 +2,21 @@ import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 import { NextResponse, type NextRequest } from 'next/server'
 
+function isSafeRelativePath(raw: string): boolean {
+  if (!raw.startsWith('/') || raw.startsWith('//')) return false
+  try {
+    const parsed = new URL(raw, 'http://n')
+    return parsed.host === 'n'
+  } catch {
+    return false
+  }
+}
+
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url)
   const code = searchParams.get('code')
   const rawNext = searchParams.get('next') ?? '/tracker'
-  const next = rawNext.startsWith('/') && !rawNext.startsWith('//') ? rawNext : '/tracker'
+  const next = isSafeRelativePath(rawNext) ? rawNext : '/tracker'
 
   if (code) {
     const cookieStore = await cookies()
