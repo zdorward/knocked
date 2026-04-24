@@ -1,6 +1,18 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80">
-  <!-- Door body -->
-  <rect x="6" y="6" width="68" height="68" rx="6" fill="#d97706"/>
-  <!-- Door knob -->
-  <circle cx="58" cy="42" r="6" fill="#fde68a"/>
+  <style>
+    .frame { fill: #92400e; }
+    .door  { fill: #d97706; }
+    .knob  { fill: #fde68a; }
+    @media (prefers-color-scheme: light) {
+      .frame { fill: #78350f; }
+      .door  { fill: #b45309; }
+      .knob  { fill: #d97706; }
+    }
+  </style>
+  <!-- Door frame (darker amber border) -->
+  <rect x="16" y="4" width="48" height="74" rx="3" class="frame"/>
+  <!-- Door panel -->
+  <rect x="21" y="9" width="38" height="69" rx="1" class="door"/>
+  <!-- Knob (right side, mid-height) -->
+  <circle cx="51" cy="47" r="5" class="knob"/>
 </svg>

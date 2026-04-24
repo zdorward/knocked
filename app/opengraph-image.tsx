@@ -24,39 +24,47 @@ export default function Image() {
         <div
           style={{
             width: 160,
-            height: 160,
-            borderRadius: 32,
-            backgroundColor: '#1c1400',
+            height: 200,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             flexShrink: 0,
+            position: 'relative',
           }}
         >
-          {/* Door body */}
+          {/* Door frame */}
           <div
             style={{
-              width: 64,
-              height: 104,
-              borderRadius: 8,
-              backgroundColor: '#d97706',
-              position: 'relative',
-              display: 'flex',
+              position: 'absolute',
+              inset: 0,
+              backgroundColor: '#92400e',
+              borderRadius: 6,
             }}
-          >
-            {/* Door knob */}
-            <div
-              style={{
-                position: 'absolute',
-                right: 10,
-                top: 46,
-                width: 16,
-                height: 16,
-                borderRadius: 8,
-                backgroundColor: '#fde68a',
-              }}
-            />
-          </div>
+          />
+          {/* Door panel */}
+          <div
+            style={{
+              position: 'absolute',
+              top: 13,
+              left: 13,
+              right: 13,
+              bottom: 13,
+              backgroundColor: '#d97706',
+              borderRadius: 2,
+            }}
+          />
+          {/* Knob */}
+          <div
+            style={{
+              position: 'absolute',
+              right: 26,
+              top: 105,
+              width: 20,
+              height: 20,
+              borderRadius: 10,
+              backgroundColor: '#fde68a',
+            }}
+          />
         </div>
 
         {/* Text block */}
