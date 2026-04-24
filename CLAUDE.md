@@ -63,7 +63,7 @@ Follow standard patterns — don't invent custom flows or novel UI conventions w
 
 ## Conventions
 
-**Target device:** Optimized for iPad on a web broser (Safari). Design decisions (layout, touch targets, spacing) should prioritize the iPad form factor.
+**Target device:** Optimized for iPad on a web browser (Safari). Design decisions (layout, touch targets, spacing) should prioritize the iPad form factor.
 
 **Styling:** Dark theme throughout (slate-900 bg, slate-800 cards). Color coding: blue = knock, violet = conversation, emerald = sale.
 
