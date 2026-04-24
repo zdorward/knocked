@@ -10,15 +10,21 @@ export default function SignupPage() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [googleLoading, setGoogleLoading] = useState(false)
+  const [confirmed, setConfirmed] = useState(false)
   const router = useRouter()
 
   async function handleGoogleSignUp() {
+    setGoogleLoading(true)
     const supabase = createClient()
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: { redirectTo: `${window.location.origin}/auth/callback` },
     })
-    if (error) setError(error.message)
+    if (error) {
+      setError(error.message)
+      setGoogleLoading(false)
+    }
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -26,13 +32,31 @@ export default function SignupPage() {
     setLoading(true)
     setError('')
     const supabase = createClient()
-    const { error } = await supabase.auth.signUp({ email, password })
+    const { data, error } = await supabase.auth.signUp({ email, password })
     if (error) {
       setError(error.message)
       setLoading(false)
-    } else {
+    } else if (data.session) {
       router.push('/tracker')
+    } else {
+      setConfirmed(true)
     }
+  }
+
+  if (confirmed) {
+    return (
+      <div className="min-h-screen bg-slate-900 flex items-center justify-center p-6">
+        <div className="w-full max-w-sm">
+          <div className="bg-emerald-950 border border-emerald-700 rounded-xl p-4">
+            <p className="text-emerald-400 font-semibold mb-1">Check your email</p>
+            <p className="text-emerald-300 text-sm">We sent a confirmation link to {email}</p>
+          </div>
+          <p className="text-slate-500 text-sm text-center mt-6">
+            <Link href="/login" className="text-blue-400">← Back to sign in</Link>
+          </p>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -43,9 +67,10 @@ export default function SignupPage() {
 
         <button
           onClick={handleGoogleSignUp}
-          className="w-full bg-slate-800 text-white rounded-xl px-4 py-4 text-lg font-medium border border-slate-700 mb-6 active:opacity-80"
+          disabled={googleLoading}
+          className="w-full bg-slate-800 text-white rounded-xl px-4 py-4 text-lg font-medium border border-slate-700 mb-6 active:opacity-80 disabled:opacity-50"
         >
-          Continue with Google
+          {googleLoading ? 'Redirecting…' : 'Continue with Google'}
         </button>
 
         <div className="flex items-center gap-4 mb-6">
@@ -69,6 +94,7 @@ export default function SignupPage() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             className="bg-slate-800 text-white rounded-xl px-4 py-4 text-lg outline-none focus:ring-2 focus:ring-blue-500"
+            minLength={6}
             required
           />
           {error && <p className="text-red-400 text-sm">{error}</p>}
@@ -83,9 +109,7 @@ export default function SignupPage() {
 
         <p className="text-slate-500 text-sm text-center mt-6">
           Already have an account?{' '}
-          <Link href="/login" className="text-blue-400">
-            Sign in
-          </Link>
+          <Link href="/login" className="text-blue-400">Sign in</Link>
         </p>
       </div>
     </div>

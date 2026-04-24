@@ -10,15 +10,20 @@ export default function LoginPage() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [googleLoading, setGoogleLoading] = useState(false)
   const router = useRouter()
 
   async function handleGoogleSignIn() {
+    setGoogleLoading(true)
     const supabase = createClient()
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: { redirectTo: `${window.location.origin}/auth/callback` },
     })
-    if (error) setError(error.message)
+    if (error) {
+      setError(error.message)
+      setGoogleLoading(false)
+    }
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -43,9 +48,10 @@ export default function LoginPage() {
 
         <button
           onClick={handleGoogleSignIn}
-          className="w-full bg-slate-800 text-white rounded-xl px-4 py-4 text-lg font-medium border border-slate-700 mb-6 active:opacity-80"
+          disabled={googleLoading}
+          className="w-full bg-slate-800 text-white rounded-xl px-4 py-4 text-lg font-medium border border-slate-700 mb-6 active:opacity-80 disabled:opacity-50"
         >
-          Continue with Google
+          {googleLoading ? 'Redirecting…' : 'Continue with Google'}
         </button>
 
         <div className="flex items-center gap-4 mb-6">
