@@ -68,6 +68,20 @@ test('dropdown opens when ⋯ is clicked', () => {
   expect(screen.getByRole('button', { name: 'Sign out' })).toBeInTheDocument()
 })
 
+test('dropdown closes when clicking outside', () => {
+  render(
+    <div>
+      <NavBar email="test@example.com" />
+      <div data-testid="outside">outside</div>
+    </div>
+  )
+  fireEvent.click(screen.getByRole('button', { name: 'Account menu' }))
+  expect(screen.getByText('test@example.com')).toBeInTheDocument()
+
+  fireEvent.pointerDown(screen.getByTestId('outside'))
+  expect(screen.queryByText('test@example.com')).not.toBeInTheDocument()
+})
+
 test('sign out calls supabase signOut and redirects to /login', async () => {
   render(<NavBar email="test@example.com" />)
   fireEvent.click(screen.getByRole('button', { name: 'Account menu' }))
