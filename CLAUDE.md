@@ -27,6 +27,7 @@ npm test -- --testNamePattern="test name"
 **Stack:** Next.js 14 App Router, React 18, TypeScript, Tailwind CSS, Supabase (Postgres + Auth), Recharts
 
 **Route groups:**
+
 - `app/(app)/` — protected routes (`/tracker`, `/stats`)
 - `app/(auth)/` — unauthenticated routes (`/login`)
 - `app/api/events/` — single REST endpoint (POST to log events, DELETE to undo)
@@ -34,6 +35,7 @@ npm test -- --testNamePattern="test name"
 **Data model:** One `events` table with `user_id`, `type` (`knock | conversation | sale`), and `created_at`. No ORM — raw Supabase client calls throughout.
 
 **Data flow:**
+
 1. Server Components fetch events from Supabase directly
 2. Initial data passed as props to `'use client'` components for interactivity
 3. User actions call `POST /api/events` or `DELETE /api/events`
@@ -42,12 +44,14 @@ npm test -- --testNamePattern="test name"
 **Auth:** Supabase Auth via `@supabase/ssr`. Middleware (`middleware.ts`) enforces auth on all routes — unauthenticated requests redirect to `/login`, authenticated requests to `/login` redirect to `/tracker`.
 
 **Key files:**
+
 - `lib/types.ts` — `EventType`, `Counts`, `EventRow` types and `VALID_TYPES` constant
 - `lib/queries.ts` — all stats aggregation functions (`salesByDay`, `salesByHour`, `salesByDow`, `conversionRatesByWeek`, `lifetimeConversionRates`)
 - `lib/supabase/server.ts` — server-side Supabase client (cookie-based)
 - `lib/supabase/client.ts` — browser-side Supabase client
 
 **Required environment variables:**
+
 ```
 NEXT_PUBLIC_SUPABASE_URL
 NEXT_PUBLIC_SUPABASE_ANON_KEY
@@ -59,7 +63,7 @@ Follow standard patterns — don't invent custom flows or novel UI conventions w
 
 ## Conventions
 
-**Target device:** Optimized for iPad. Design decisions (layout, touch targets, spacing) should prioritize the iPad form factor.
+**Target device:** Optimized for iPad on a web broser (Safari). Design decisions (layout, touch targets, spacing) should prioritize the iPad form factor.
 
 **Styling:** Dark theme throughout (slate-900 bg, slate-800 cards). Color coding: blue = knock, violet = conversation, emerald = sale.
 
