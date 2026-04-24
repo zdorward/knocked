@@ -40,30 +40,19 @@ export default function Image() {
               height: 104,
               borderRadius: 8,
               backgroundColor: '#d97706',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
               position: 'relative',
+              display: 'flex',
             }}
           >
-            {/* Inner panel */}
-            <div
-              style={{
-                width: 40,
-                height: 80,
-                borderRadius: 4,
-                backgroundColor: '#b45309',
-              }}
-            />
             {/* Door knob */}
             <div
               style={{
                 position: 'absolute',
-                right: 8,
-                top: 44,
-                width: 10,
-                height: 10,
-                borderRadius: 5,
+                right: 10,
+                top: 46,
+                width: 16,
+                height: 16,
+                borderRadius: 8,
                 backgroundColor: '#fde68a',
               }}
             />
