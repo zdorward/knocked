@@ -29,6 +29,7 @@ jest.mock('@/lib/supabase/client', () => {
 
 beforeEach(() => {
   mockPathname.mockReturnValue('/tracker')
+  mockSignOut.mockClear()
   mockSignOut.mockResolvedValue({})
   mockPush.mockClear()
 })
@@ -62,14 +63,14 @@ test('dropdown is hidden by default', () => {
 
 test('dropdown opens when ⋯ is clicked', () => {
   render(<NavBar email="test@example.com" />)
-  fireEvent.click(screen.getByRole('button', { name: '⋯' }))
+  fireEvent.click(screen.getByRole('button', { name: 'Account menu' }))
   expect(screen.getByText('test@example.com')).toBeInTheDocument()
   expect(screen.getByRole('button', { name: 'Sign out' })).toBeInTheDocument()
 })
 
 test('sign out calls supabase signOut and redirects to /login', async () => {
   render(<NavBar email="test@example.com" />)
-  fireEvent.click(screen.getByRole('button', { name: '⋯' }))
+  fireEvent.click(screen.getByRole('button', { name: 'Account menu' }))
   fireEvent.click(screen.getByRole('button', { name: 'Sign out' }))
   await waitFor(() => {
     expect(mockSignOut).toHaveBeenCalledTimes(1)

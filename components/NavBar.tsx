@@ -58,6 +58,8 @@ export function NavBar({ email }: Props) {
         </div>
         <div className="relative" ref={menuRef}>
           <button
+            aria-label="Account menu"
+            aria-expanded={menuOpen}
             onClick={() => setMenuOpen((o) => !o)}
             className="px-3 py-1.5 rounded-lg bg-slate-700 text-slate-300 text-sm leading-none"
           >
