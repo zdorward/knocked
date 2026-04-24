@@ -5,11 +5,14 @@ import { NextRequest } from 'next/server'
 
 // eslint-disable-next-line no-var
 var mockDelete: jest.Mock
+// eslint-disable-next-line no-var
+var mockInsert: jest.Mock
 
 jest.mock('@/lib/supabase/server', () => {
   mockDelete = jest.fn().mockReturnValue({
     eq: jest.fn().mockResolvedValue({ error: null }),
   })
+  mockInsert = jest.fn().mockResolvedValue({ error: null })
   return {
     createClient: jest.fn().mockResolvedValue({
       auth: {
@@ -18,7 +21,7 @@ jest.mock('@/lib/supabase/server', () => {
         }),
       },
       from: jest.fn().mockReturnValue({
-        insert: jest.fn().mockResolvedValue({ error: null }),
+        insert: mockInsert,
         select: jest.fn().mockReturnThis(),
         eq: jest.fn().mockReturnThis(),
         gte: jest.fn().mockReturnThis(),
@@ -119,6 +122,12 @@ test('POST sale with valid contract_value and account_type returns 200', async (
   const res = await POST(req)
   expect(res.status).toBe(200)
   expect(await res.json()).toEqual({ success: true })
+  expect(mockInsert).toHaveBeenCalledWith({
+    user_id: 'user-123',
+    type: 'sale',
+    contract_value: 299,
+    account_type: 'gen_pest',
+  })
 })
 
 test('POST knock without sale fields returns 200', async () => {
