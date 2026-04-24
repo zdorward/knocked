@@ -20,6 +20,9 @@
 .DS_Store
 *.pem
 
+# superpowers
+.superpowers/
+
 # debug
 npm-debug.log*
 yarn-debug.log*
