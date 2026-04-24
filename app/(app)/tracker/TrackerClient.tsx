@@ -1,16 +1,14 @@
 'use client'
 
 import { useState } from 'react'
-import Link from 'next/link'
 import { MetricRow } from '@/components/MetricRow'
 import { type Counts, type EventType } from '@/lib/types'
 
 interface Props {
   initialCounts: Counts
-  userName: string
 }
 
-export function TrackerClient({ initialCounts, userName }: Props) {
+export function TrackerClient({ initialCounts }: Props) {
   const [counts, setCounts] = useState<Counts>(initialCounts)
 
   async function handleIncrement(type: EventType) {
@@ -45,15 +43,9 @@ export function TrackerClient({ initialCounts, userName }: Props) {
   })
 
   return (
-    <div className="min-h-screen bg-slate-900 p-6 flex flex-col gap-6 max-w-2xl mx-auto">
-      <div className="flex justify-between items-start pt-2">
-        <div>
-          <h1 className="text-white text-2xl font-bold">Knocked</h1>
-          <p className="text-slate-400 text-sm mt-0.5">{today}</p>
-        </div>
-        <Link href="/stats" className="text-slate-400 text-sm hover:text-white mt-1">
-          Stats →
-        </Link>
+    <div className="flex flex-col gap-6">
+      <div className="pt-2">
+        <p className="text-slate-400 text-sm">{today}</p>
       </div>
 
       <div className="flex flex-col gap-4 flex-1">
@@ -82,8 +74,6 @@ export function TrackerClient({ initialCounts, userName }: Props) {
           onUndo={handleUndo}
         />
       </div>
-
-      <p className="text-slate-600 text-xs text-center pb-2">{userName}</p>
     </div>
   )
 }

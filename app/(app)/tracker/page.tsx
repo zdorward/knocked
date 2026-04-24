@@ -25,5 +25,5 @@ export default async function TrackerPage() {
     sale: events?.filter((e) => e.type === 'sale').length ?? 0,
   }
 
-  return <TrackerClient initialCounts={counts} userName={user!.email ?? ''} />
+  return <TrackerClient initialCounts={counts} />
 }
