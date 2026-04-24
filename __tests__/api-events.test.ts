@@ -85,3 +85,48 @@ test('DELETE accepts valid event type and returns success', async () => {
   expect(res.status).toBe(200)
   expect(await res.json()).toEqual({ success: true })
 })
+
+test('POST sale without contract_value returns 400', async () => {
+  const req = new NextRequest('http://localhost/api/events', {
+    method: 'POST',
+    body: JSON.stringify({ type: 'sale', account_type: 'gen_pest' }),
+    headers: { 'Content-Type': 'application/json' },
+  })
+  const res = await POST(req)
+  expect(res.status).toBe(400)
+  const body = await res.json()
+  expect(body.error).toBe('contract_value must be a positive number')
+})
+
+test('POST sale with invalid account_type returns 400', async () => {
+  const req = new NextRequest('http://localhost/api/events', {
+    method: 'POST',
+    body: JSON.stringify({ type: 'sale', contract_value: 299, account_type: 'bad' }),
+    headers: { 'Content-Type': 'application/json' },
+  })
+  const res = await POST(req)
+  expect(res.status).toBe(400)
+  const body = await res.json()
+  expect(body.error).toBe('Invalid account_type')
+})
+
+test('POST sale with valid contract_value and account_type returns 200', async () => {
+  const req = new NextRequest('http://localhost/api/events', {
+    method: 'POST',
+    body: JSON.stringify({ type: 'sale', contract_value: 299, account_type: 'gen_pest' }),
+    headers: { 'Content-Type': 'application/json' },
+  })
+  const res = await POST(req)
+  expect(res.status).toBe(200)
+  expect(await res.json()).toEqual({ success: true })
+})
+
+test('POST knock without sale fields returns 200', async () => {
+  const req = new NextRequest('http://localhost/api/events', {
+    method: 'POST',
+    body: JSON.stringify({ type: 'knock' }),
+    headers: { 'Content-Type': 'application/json' },
+  })
+  const res = await POST(req)
+  expect(res.status).toBe(200)
+})

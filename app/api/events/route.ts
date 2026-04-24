@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
-import { VALID_TYPES, type EventType } from '@/lib/types'
+import { VALID_TYPES, VALID_ACCOUNT_TYPES, type EventType, type AccountType } from '@/lib/types'
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function POST(request: NextRequest) {
@@ -9,19 +9,35 @@ export async function POST(request: NextRequest) {
   } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  let body: { type?: unknown }
+  let body: { type?: unknown; contract_value?: unknown; account_type?: unknown }
   try {
     body = await request.json()
   } catch {
     return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 })
   }
-  const { type } = body
+  const { type, contract_value, account_type } = body
 
   if (!VALID_TYPES.includes(type as EventType)) {
     return NextResponse.json({ error: 'Invalid type' }, { status: 400 })
   }
 
-  const { error } = await supabase.from('events').insert({ user_id: user.id, type })
+  const insertData: Record<string, unknown> = { user_id: user.id, type }
+
+  if (type === 'sale') {
+    if (typeof contract_value !== 'number' || contract_value <= 0) {
+      return NextResponse.json(
+        { error: 'contract_value must be a positive number' },
+        { status: 400 }
+      )
+    }
+    if (!VALID_ACCOUNT_TYPES.includes(account_type as AccountType)) {
+      return NextResponse.json({ error: 'Invalid account_type' }, { status: 400 })
+    }
+    insertData.contract_value = contract_value
+    insertData.account_type = account_type
+  }
+
+  const { error } = await supabase.from('events').insert(insertData)
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
   return NextResponse.json({ success: true })
