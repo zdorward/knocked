@@ -1,14 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80">
-  <style>
-    .door  { fill: #d97706; }
-    .knob  { fill: #fde68a; }
-    @media (prefers-color-scheme: light) {
-      .door  { fill: #b45309; }
-      .knob  { fill: #92400e; }
-    }
-  </style>
-  <!-- Door panel (no frame — floats on transparency) -->
-  <rect x="14" y="4" width="52" height="74" rx="4" class="door" shape-rendering="crispEdges"/>
-  <!-- Knob -->
-  <circle cx="54" cy="44" r="6" class="knob"/>
+  <!-- Door fills full square — no transparent bleed -->
+  <rect x="0" y="0" width="80" height="80" rx="14" fill="#d97706"/>
+  <!-- Knob — dark brown for contrast -->
+  <circle cx="54" cy="44" r="7" fill="#78350f"/>
 </svg>
