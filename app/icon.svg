@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80">
+  <!-- Dark amber background square -->
+  <rect width="80" height="80" rx="16" fill="#1c1400"/>
+  <!-- Door body -->
+  <rect x="24" y="14" width="32" height="52" rx="4" fill="#d97706"/>
+  <!-- Inner panel -->
+  <rect x="30" y="20" width="20" height="40" rx="2" fill="#b45309"/>
+  <!-- Door knob -->
+  <circle cx="45" cy="42" r="3" fill="#fde68a"/>
+</svg>
