@@ -30,7 +30,7 @@ export default function ForgotPasswordPage() {
     <div className="min-h-screen bg-slate-900 flex items-center justify-center p-6">
       <div className="w-full max-w-sm">
         <h1 className="text-white text-3xl font-bold mb-2">Reset password</h1>
-        <p className="text-slate-400 mb-8">We'll send a reset link to your email</p>
+        <p className="text-slate-400 mb-8">We&apos;ll send a reset link to your email</p>
 
         {sent ? (
           <div className="bg-emerald-950 border border-emerald-700 rounded-xl p-4">
