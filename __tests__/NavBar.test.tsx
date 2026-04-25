@@ -76,10 +76,10 @@ test('shows email initial in avatar when no emoji set', () => {
   expect(avatar).toHaveTextContent('T')
 })
 
-test('shows emoji in avatar when emoji is set', () => {
+test('shows email initial in avatar regardless of emoji', () => {
   render(<NavBar {...defaultProps} emoji="🎉" />)
   const avatar = screen.getByLabelText('Open settings')
-  expect(avatar).toHaveTextContent('🎉')
+  expect(avatar).toHaveTextContent('T')
 })
 
 test('settings modal is hidden by default', () => {

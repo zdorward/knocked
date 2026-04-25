@@ -73,11 +73,7 @@ export function NavBar({ email, displayName, emoji }: Props) {
             onClick={() => setSettingsOpen(true)}
             className="w-11 h-11 rounded-full bg-slate-600 flex items-center justify-center text-white font-semibold text-sm active:opacity-70 shrink-0"
           >
-            {currentEmoji ? (
-              <span className="text-lg leading-none">{currentEmoji}</span>
-            ) : (
-              <span>{email[0]?.toUpperCase() || '?'}</span>
-            )}
+            <span>{email[0]?.toUpperCase() || '?'}</span>
           </button>
         </div>
       </nav>
