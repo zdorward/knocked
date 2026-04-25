@@ -16,7 +16,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     : { data: null }
 
   return (
-    <div className="min-h-screen bg-slate-900 flex flex-col">
+    <div className="min-h-dvh bg-slate-900 flex flex-col">
       <NavBar
         email={user?.email ?? ''}
         displayName={profile?.display_name ?? ''}
