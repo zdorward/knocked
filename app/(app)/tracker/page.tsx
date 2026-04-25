@@ -25,5 +25,11 @@ export default async function TrackerPage() {
     sale: events?.filter((e) => e.type === 'sale').length ?? 0,
   }
 
-  return <TrackerClient initialCounts={counts} />
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('emoji')
+    .eq('id', user!.id)
+    .single()
+
+  return <TrackerClient initialCounts={counts} emoji={profile?.emoji ?? null} />
 }

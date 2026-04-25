@@ -7,9 +7,18 @@ import { type Counts, type EventType, type AccountType } from '@/lib/types'
 
 interface Props {
   initialCounts: Counts
+  emoji: string | null
 }
 
-export function TrackerClient({ initialCounts }: Props) {
+function getGreeting(emoji: string | null): string | null {
+  const hour = new Date().getHours()
+  if (hour >= 8 && hour < 12) return 'Good Morning'
+  if (hour >= 12 && hour < 17) return 'Good Afternoon'
+  if (hour >= 17 && hour < 21) return `Prime Time ${emoji ?? ''}`
+  return null
+}
+
+export function TrackerClient({ initialCounts, emoji }: Props) {
   const [counts, setCounts] = useState<Counts>(initialCounts)
   const [saleModalOpen, setSaleModalOpen] = useState(false)
 
@@ -57,9 +66,16 @@ export function TrackerClient({ initialCounts }: Props) {
     day: 'numeric',
   })
 
+  const greeting = getGreeting(emoji)
+
   return (
     <div className="flex flex-col gap-6 flex-1 justify-center">
-      <p className="text-slate-400 text-sm">{today}</p>
+      <div>
+        {greeting && (
+          <p className="text-white text-2xl font-bold mb-1">{greeting}</p>
+        )}
+        <p className="text-slate-400 text-sm">{today}</p>
+      </div>
 
       <div className="flex flex-col gap-4">
         <MetricRow
