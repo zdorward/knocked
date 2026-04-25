@@ -21,16 +21,16 @@ test('renders when open=true', () => {
   expect(screen.getByRole('button', { name: 'Mosquito' })).toBeInTheDocument()
 })
 
-test('Log Sale button is disabled when no value entered', () => {
+test('Confirm button is disabled when no value entered', () => {
   render(<SaleModal open={true} onClose={mockOnClose} onConfirm={mockOnConfirm} />)
-  const logBtn = screen.getByRole('button', { name: /log sale/i })
+  const logBtn = screen.getByRole('button', { name: /confirm/i })
   expect(logBtn).toBeDisabled()
 })
 
-test('Log Sale button is enabled after entering a positive value', () => {
+test('Confirm button is enabled after entering a positive value', () => {
   render(<SaleModal open={true} onClose={mockOnClose} onConfirm={mockOnConfirm} />)
   fireEvent.change(screen.getByPlaceholderText('0.00'), { target: { value: '299' } })
-  expect(screen.getByRole('button', { name: /log sale/i })).not.toBeDisabled()
+  expect(screen.getByRole('button', { name: /confirm/i })).not.toBeDisabled()
 })
 
 test('Gen Pest is selected by default', () => {
@@ -53,10 +53,10 @@ test('Cancel calls onClose', () => {
   expect(mockOnConfirm).not.toHaveBeenCalled()
 })
 
-test('Log Sale calls onConfirm with value and account type', () => {
+test('Confirm calls onConfirm with value and account type', () => {
   render(<SaleModal open={true} onClose={mockOnClose} onConfirm={mockOnConfirm} />)
   fireEvent.change(screen.getByPlaceholderText('0.00'), { target: { value: '349' } })
   fireEvent.click(screen.getByRole('button', { name: 'Mosquito' }))
-  fireEvent.click(screen.getByRole('button', { name: /log sale/i }))
+  fireEvent.click(screen.getByRole('button', { name: /confirm/i }))
   expect(mockOnConfirm).toHaveBeenCalledWith(349, 'mosquito')
 })
