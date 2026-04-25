@@ -69,7 +69,7 @@ export function TrackerClient({ initialCounts, emoji }: Props) {
   const greeting = getGreeting(emoji)
 
   return (
-    <div className="flex flex-col gap-6 flex-1 justify-center">
+    <div className="flex flex-col gap-6 pt-8">
       <div>
         {greeting && (
           <p className="text-white text-2xl font-bold mb-1">{greeting}</p>
