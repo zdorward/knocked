@@ -37,19 +37,29 @@ export function SaleModal({ open, onClose, onConfirm }: Props) {
   }
 
   return (
-    <div className="fixed inset-0 bg-black/60 flex items-end justify-center z-50 p-4">
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="sale-modal-title"
+      className="fixed inset-0 bg-black/60 flex items-end justify-center z-50 p-4"
+    >
       <div className="bg-slate-800 rounded-2xl p-6 w-full max-w-sm border border-slate-700">
-        <h2 className="text-white text-lg font-bold mb-5">Log Sale</h2>
+        <h2 id="sale-modal-title" className="text-white text-lg font-bold mb-5">Log Sale</h2>
 
         <div className="mb-4">
-          <p className="text-slate-400 text-xs uppercase tracking-widest mb-2">
+          <label
+            htmlFor="contract-value"
+            className="text-slate-400 text-xs uppercase tracking-widest mb-2 block"
+          >
             Contract Value
-          </p>
+          </label>
           <div className="flex items-center bg-slate-900 border border-slate-600 rounded-xl px-4 py-3 gap-2">
-            <span className="text-slate-500 font-semibold">$</span>
+            <span className="text-slate-500 font-semibold" aria-hidden="true">$</span>
             <input
+              id="contract-value"
               type="number"
               inputMode="decimal"
+              min="0.01"
               placeholder="0.00"
               value={contractValue}
               onChange={(e) => setContractValue(e.target.value)}
