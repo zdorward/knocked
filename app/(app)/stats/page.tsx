@@ -6,6 +6,7 @@ import {
   salesByDow,
   conversionRatesByWeek,
   lifetimeConversionRates,
+  contractStats,
 } from '@/lib/queries'
 import { StatCard } from '@/components/StatCard'
 import { SalesByDayChart } from '@/components/charts/SalesByDayChart'
@@ -23,13 +24,14 @@ export default async function StatsPage() {
 
   const { data: events } = await supabase
     .from('events')
-    .select('type, created_at')
+    .select('type, created_at, contract_value')
     .eq('user_id', user.id)
     .order('created_at', { ascending: true })
 
   const allEvents = events ?? []
 
   const rates = lifetimeConversionRates(allEvents)
+  const { avgContractValue, revenuePerDoor } = contractStats(allEvents)
   const byDay = salesByDay(allEvents)
   const byHour = salesByHour(allEvents)
   const byDow = salesByDow(allEvents)
@@ -38,6 +40,8 @@ export default async function StatsPage() {
   return (
     <>
       <div className="grid grid-cols-2 gap-4 mb-6">
+        <StatCard label="Avg Contract" value={`$${Math.round(avgContractValue)}`} />
+        <StatCard label="$ / Door" value={`$${revenuePerDoor.toFixed(2)}`} />
         <StatCard label="Knock → Sale" value={`${rates.knockToSale}%`} />
         <StatCard label="Convo → Sale" value={`${rates.convoToSale}%`} />
       </div>
