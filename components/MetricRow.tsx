@@ -9,9 +9,18 @@ interface MetricRowProps {
   color: string
   onIncrement: (type: EventType) => void
   onUndo: (type: EventType) => void
+  onIncrementSale?: () => void
 }
 
-export function MetricRow({ label, count, type, color, onIncrement, onUndo }: MetricRowProps) {
+export function MetricRow({
+  label,
+  count,
+  type,
+  color,
+  onIncrement,
+  onUndo,
+  onIncrementSale,
+}: MetricRowProps) {
   return (
     <div className="flex items-center justify-between bg-slate-800 rounded-2xl px-6 py-5">
       <div>
@@ -27,7 +36,7 @@ export function MetricRow({ label, count, type, color, onIncrement, onUndo }: Me
           undo
         </button>
         <button
-          onClick={() => onIncrement(type)}
+          onClick={() => (onIncrementSale ? onIncrementSale() : onIncrement(type))}
           className={`${color} text-white text-4xl font-bold w-20 h-20 rounded-2xl flex items-center justify-center active:opacity-80`}
           aria-label={`Add ${label}`}
         >

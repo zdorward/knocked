@@ -2,7 +2,8 @@
 
 import { useState } from 'react'
 import { MetricRow } from '@/components/MetricRow'
-import { type Counts, type EventType } from '@/lib/types'
+import { SaleModal } from '@/components/SaleModal'
+import { type Counts, type EventType, type AccountType } from '@/lib/types'
 
 interface Props {
   initialCounts: Counts
@@ -10,6 +11,7 @@ interface Props {
 
 export function TrackerClient({ initialCounts }: Props) {
   const [counts, setCounts] = useState<Counts>(initialCounts)
+  const [saleModalOpen, setSaleModalOpen] = useState(false)
 
   async function handleIncrement(type: EventType) {
     setCounts((prev) => ({ ...prev, [type]: prev[type] + 1 }))
@@ -33,6 +35,19 @@ export function TrackerClient({ initialCounts }: Props) {
     })
     if (!res.ok) {
       setCounts((prev) => ({ ...prev, [type]: prev[type] + 1 }))
+    }
+  }
+
+  async function handleSaleConfirm(contractValue: number, accountType: AccountType) {
+    setSaleModalOpen(false)
+    setCounts((prev) => ({ ...prev, sale: prev.sale + 1 }))
+    const res = await fetch('/api/events', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: 'sale', contract_value: contractValue, account_type: accountType }),
+    })
+    if (!res.ok) {
+      setCounts((prev) => ({ ...prev, sale: prev.sale - 1 }))
     }
   }
 
@@ -72,8 +87,15 @@ export function TrackerClient({ initialCounts }: Props) {
           color="bg-emerald-500"
           onIncrement={handleIncrement}
           onUndo={handleUndo}
+          onIncrementSale={() => setSaleModalOpen(true)}
         />
       </div>
+
+      <SaleModal
+        open={saleModalOpen}
+        onClose={() => setSaleModalOpen(false)}
+        onConfirm={handleSaleConfirm}
+      />
     </div>
   )
 }
