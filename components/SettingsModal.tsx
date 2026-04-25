@@ -24,20 +24,17 @@ export function SettingsModal({
   const [displayName, setDisplayName] = useState(initialDisplayName)
   const [emoji, setEmoji] = useState(initialEmoji ?? '')
   const [saving, setSaving] = useState(false)
-  const [saveError, setSaveError] = useState('')
 
   // Sync state whenever the modal opens
   useEffect(() => {
     if (open) {
       setDisplayName(initialDisplayName)
       setEmoji(initialEmoji ?? '')
-      setSaveError('')
     }
   }, [open, initialDisplayName, initialEmoji])
 
   async function handleSave() {
     setSaving(true)
-    setSaveError('')
     const firstEmoji = emoji.trim() ? (Array.from(emoji.trim())[0] ?? null) : null
     await onSave(displayName.trim(), firstEmoji)
     setSaving(false)
@@ -58,20 +55,30 @@ export function SettingsModal({
         onClick={(e) => e.stopPropagation()}
       >
         <div className="p-6">
-          <h2 id="settings-modal-title" className="text-white text-lg font-bold mb-6">
-            Settings
-          </h2>
+          {/* Header */}
+          <div className="flex items-center justify-between mb-6">
+            <h2 id="settings-modal-title" className="text-white text-lg font-bold">
+              Settings
+            </h2>
+            <button
+              onClick={onClose}
+              aria-label="Close settings"
+              className="w-7 h-7 rounded-lg bg-slate-700 flex items-center justify-center text-slate-400 active:opacity-70"
+            >
+              ✕
+            </button>
+          </div>
 
-          {/* Emoji — visible input, tapping it opens the keyboard on iPad */}
-          <div className="mb-5">
+          {/* Emoji field */}
+          <div className="mb-4">
             <label
               htmlFor="emoji-input"
               className="text-slate-400 text-xs uppercase tracking-widest mb-2 block"
             >
               Personal Emoji
             </label>
-            <div className="w-full bg-slate-900 border border-slate-600 rounded-xl px-4 py-3 flex items-center gap-3">
-              <span className="text-3xl w-10 text-center leading-none select-none">
+            <div className="h-12 bg-slate-900 border border-slate-600 rounded-xl px-4 flex items-center gap-3">
+              <span className="text-xl leading-none select-none w-7 text-center">
                 {previewEmoji ?? '👤'}
               </span>
               <input
@@ -86,7 +93,7 @@ export function SettingsModal({
             </div>
           </div>
 
-          {/* Display name */}
+          {/* Display name field */}
           <div className="mb-6">
             <label
               htmlFor="display-name"
@@ -101,29 +108,18 @@ export function SettingsModal({
               onChange={(e) => setDisplayName(e.target.value)}
               placeholder="Your name"
               maxLength={50}
-              className="w-full bg-slate-900 border border-slate-600 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-blue-500"
+              className="w-full h-12 bg-slate-900 border border-slate-600 rounded-xl px-4 text-white text-sm outline-none focus:border-blue-500"
             />
           </div>
 
-          {saveError && (
-            <p className="text-red-400 text-sm mb-4">{saveError}</p>
-          )}
-
-          <div className="flex gap-3">
-            <button
-              onClick={onClose}
-              className="flex-1 py-3 rounded-xl bg-slate-700 text-slate-300 text-sm font-semibold active:opacity-70"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={handleSave}
-              disabled={saving}
-              className="flex-[2] py-3 rounded-xl bg-blue-500 text-white text-sm font-semibold disabled:opacity-50 active:opacity-80"
-            >
-              {saving ? 'Saving…' : 'Save'}
-            </button>
-          </div>
+          {/* Save */}
+          <button
+            onClick={handleSave}
+            disabled={saving}
+            className="w-full py-3 rounded-xl bg-blue-500 text-white text-sm font-semibold disabled:opacity-50 active:opacity-80"
+          >
+            {saving ? 'Saving…' : 'Save'}
+          </button>
         </div>
 
         {/* Sign out — separated */}
