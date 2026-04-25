@@ -38,12 +38,12 @@ export function SettingsModal({
   async function handleSave() {
     setSaving(true)
     setSaveError('')
-    const firstEmoji = emoji.trim() ? ([...emoji.trim()][0] ?? null) : null
+    const firstEmoji = emoji.trim() ? (Array.from(emoji.trim())[0] ?? null) : null
     await onSave(displayName.trim(), firstEmoji)
     setSaving(false)
   }
 
-  const previewEmoji = emoji.trim() ? [...emoji.trim()][0] : null
+  const previewEmoji = emoji.trim() ? Array.from(emoji.trim())[0] : null
 
   return (
     <div

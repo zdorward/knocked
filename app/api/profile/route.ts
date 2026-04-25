@@ -34,7 +34,7 @@ export async function PATCH(request: NextRequest) {
   }
   if (body.emoji === null || typeof body.emoji === 'string') {
     // Store only the first grapheme cluster (one emoji)
-    const emoji = typeof body.emoji === 'string' ? [...body.emoji][0] ?? null : null
+    const emoji = typeof body.emoji === 'string' ? (Array.from(body.emoji)[0] ?? null) : null
     update.emoji = emoji
   }
 

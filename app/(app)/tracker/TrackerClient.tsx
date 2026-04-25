@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { MetricRow } from '@/components/MetricRow'
 import { SaleModal } from '@/components/SaleModal'
-import { type Counts, type EventType } from '@/lib/types'
+import { type Counts, type EventType, type AccountType } from '@/lib/types'
 
 interface Props {
   initialCounts: Counts

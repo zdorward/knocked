@@ -25,8 +25,6 @@ export function NavBar({ email, displayName, emoji }: Props) {
   const [currentEmoji, setCurrentEmoji] = useState(emoji)
   const [currentDisplayName, setCurrentDisplayName] = useState(displayName)
 
-  // Avatar: emoji if set, otherwise first letter of email
-  const avatarContent = currentEmoji ?? (email[0]?.toUpperCase() || '?')
 
   async function handleSignOut() {
     const supabase = createClient()
