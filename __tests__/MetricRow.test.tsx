@@ -27,6 +27,14 @@ test('calls onIncrement with type when + is tapped', () => {
   expect(defaultProps.onIncrement).toHaveBeenCalledTimes(1)
 })
 
+test('calls onIncrementSale instead of onIncrement when provided', () => {
+  const onIncrementSale = jest.fn()
+  render(<MetricRow {...defaultProps} onIncrementSale={onIncrementSale} />)
+  fireEvent.click(screen.getByLabelText('Add Doors Knocked'))
+  expect(onIncrementSale).toHaveBeenCalledTimes(1)
+  expect(defaultProps.onIncrement).not.toHaveBeenCalled()
+})
+
 test('calls onUndo with type when undo is tapped', () => {
   render(<MetricRow {...defaultProps} />)
   fireEvent.click(screen.getByLabelText('Undo last Doors Knocked'))
