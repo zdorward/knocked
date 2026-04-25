@@ -38,6 +38,17 @@ export async function GET(request: NextRequest) {
     )
     const { error } = await supabase.auth.exchangeCodeForSession(code)
     if (!error) {
+      // Ensure a profiles row exists — covers Google OAuth users who signed up
+      // before the trigger was added, and any future sign-ins
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        const { error: upsertError } = await supabase
+          .from('profiles')
+          .upsert({ id: user.id }, { onConflict: 'id', ignoreDuplicates: true })
+        if (upsertError) {
+          console.error('[auth/callback] profile upsert failed:', upsertError.message)
+        }
+      }
       return NextResponse.redirect(`${origin}${next}`)
     }
   }
