@@ -100,3 +100,15 @@ export function contractStats(events: EventRow[]): {
 
   return { avgContractValue, revenuePerDoor }
 }
+
+export function eventsByDay(
+  events: EventRow[]
+): Record<string, { knock: number; conversation: number; sale: number }> {
+  const result: Record<string, { knock: number; conversation: number; sale: number }> = {}
+  for (const e of events) {
+    const day = e.created_at.split('T')[0]
+    if (!result[day]) result[day] = { knock: 0, conversation: 0, sale: 0 }
+    result[day][e.type]++
+  }
+  return result
+}

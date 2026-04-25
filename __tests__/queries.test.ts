@@ -1,3 +1,4 @@
+import { type EventRow } from '@/lib/types'
 import {
   salesByDay,
   salesByHour,
@@ -5,6 +6,7 @@ import {
   conversionRatesByWeek,
   lifetimeConversionRates,
   contractStats,
+  eventsByDay,
 } from '@/lib/queries'
 
 // All timestamps in UTC. June 2 2026 is a Tuesday (dow=2). June 3 is a Wednesday (dow=3).
@@ -145,4 +147,29 @@ test('contractStats: rounds to two decimal places', () => {
   const result = contractStats(events)
   expect(result.avgContractValue).toBe(233.33)
   expect(result.revenuePerDoor).toBe(233.33)
+})
+
+test('eventsByDay: returns empty object for no events', () => {
+  expect(eventsByDay([])).toEqual({})
+})
+
+test('eventsByDay: groups counts by UTC date', () => {
+  const events: EventRow[] = [
+    { type: 'knock',        created_at: '2026-05-14T09:00:00Z' },
+    { type: 'knock',        created_at: '2026-05-14T10:00:00Z' },
+    { type: 'conversation', created_at: '2026-05-14T11:00:00Z' },
+    { type: 'sale',         created_at: '2026-05-15T09:00:00Z' },
+  ]
+  const result = eventsByDay(events)
+  expect(result['2026-05-14']).toEqual({ knock: 2, conversation: 1, sale: 0 })
+  expect(result['2026-05-15']).toEqual({ knock: 0, conversation: 0, sale: 1 })
+})
+
+test('eventsByDay: omits dates with no events', () => {
+  const events: EventRow[] = [
+    { type: 'knock', created_at: '2026-05-14T09:00:00Z' },
+  ]
+  const result = eventsByDay(events)
+  expect(Object.keys(result)).toHaveLength(1)
+  expect(result['2026-05-13']).toBeUndefined()
 })
