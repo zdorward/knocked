@@ -1,4 +1,4 @@
-import { type EventRow } from '@/lib/types'
+import { type Counts, type EventRow } from '@/lib/types'
 
 const DOW_LABELS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
@@ -101,12 +101,10 @@ export function contractStats(events: EventRow[]): {
   return { avgContractValue, revenuePerDoor }
 }
 
-export function eventsByDay(
-  events: EventRow[]
-): Record<string, { knock: number; conversation: number; sale: number }> {
-  const result: Record<string, { knock: number; conversation: number; sale: number }> = {}
+export function eventsByDay(events: EventRow[]): Record<string, Counts> {
+  const result: Record<string, Counts> = {}
   for (const e of events) {
-    const day = e.created_at.split('T')[0]
+    const day = new Date(e.created_at).toISOString().split('T')[0]
     if (!result[day]) result[day] = { knock: 0, conversation: 0, sale: 0 }
     result[day][e.type]++
   }
