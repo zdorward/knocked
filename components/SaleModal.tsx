@@ -41,7 +41,7 @@ export function SaleModal({ open, onClose, onConfirm }: Props) {
       role="dialog"
       aria-modal="true"
       aria-labelledby="sale-modal-title"
-      className="fixed inset-0 bg-black/60 flex items-end justify-center z-50 p-4"
+      className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4"
     >
       <div className="bg-slate-800 rounded-2xl p-6 w-full max-w-sm border border-slate-700">
         <h2 id="sale-modal-title" className="text-white text-lg font-bold mb-5">Log Sale</h2>
@@ -102,7 +102,7 @@ export function SaleModal({ open, onClose, onConfirm }: Props) {
             disabled={!isValid}
             className="flex-[2] py-3 rounded-xl bg-emerald-500 text-white text-sm font-semibold disabled:opacity-40 active:opacity-80"
           >
-            Log Sale
+            Confirm
           </button>
         </div>
       </div>

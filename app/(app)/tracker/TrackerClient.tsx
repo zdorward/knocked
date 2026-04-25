@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { MetricRow } from '@/components/MetricRow'
 import { SaleModal } from '@/components/SaleModal'
-import { type Counts, type EventType, type AccountType } from '@/lib/types'
+import { type Counts, type EventType } from '@/lib/types'
 
 interface Props {
   initialCounts: Counts
@@ -58,12 +58,10 @@ export function TrackerClient({ initialCounts }: Props) {
   })
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="pt-2">
-        <p className="text-slate-400 text-sm">{today}</p>
-      </div>
+    <div className="flex flex-col gap-6 flex-1 justify-center">
+      <p className="text-slate-400 text-sm">{today}</p>
 
-      <div className="flex flex-col gap-4 flex-1">
+      <div className="flex flex-col gap-4">
         <MetricRow
           label="Doors Knocked"
           count={counts.knock}

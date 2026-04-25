@@ -46,9 +46,9 @@ export function CalendarClient({ events, year, month, today: todayProp }: Props)
   ]
 
   return (
-    <div>
+    <div className="flex flex-col gap-4">
       {/* Month navigation */}
-      <div className="flex justify-between items-center mb-4">
+      <div className="flex justify-between items-center">
         <button
           onClick={() => navigate(-1)}
           aria-label="Previous month"
@@ -89,7 +89,7 @@ export function CalendarClient({ events, year, month, today: todayProp }: Props)
           return (
             <div
               key={dateStr}
-              className={`bg-slate-800 rounded-lg p-1.5 min-h-16 ${
+              className={`bg-slate-800 rounded-lg p-1.5 h-24 ${
                 isToday ? 'border border-blue-500' : ''
               } ${isFuture ? 'opacity-40' : ''}`}
             >
@@ -121,7 +121,7 @@ export function CalendarClient({ events, year, month, today: todayProp }: Props)
       </div>
 
       {/* Legend */}
-      <div className="flex gap-4 mt-4 justify-center">
+      <div className="flex gap-4 justify-center">
         <div className="flex items-center gap-1.5">
           <div className="w-3 h-3 bg-blue-700 rounded" />
           <span className="text-slate-400 text-xs">Knocks</span>

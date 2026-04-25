@@ -2,11 +2,14 @@
 
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { useState, useEffect, useRef } from 'react'
+import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { SettingsModal } from '@/components/SettingsModal'
 
 interface Props {
   email: string
+  displayName: string
+  emoji: string | null
 }
 
 const tabs = [
@@ -15,22 +18,15 @@ const tabs = [
   { label: 'Calendar', href: '/calendar' },
 ]
 
-export function NavBar({ email }: Props) {
+export function NavBar({ email, displayName, emoji }: Props) {
   const pathname = usePathname()
   const router = useRouter()
-  const [menuOpen, setMenuOpen] = useState(false)
-  const menuRef = useRef<HTMLDivElement>(null)
+  const [settingsOpen, setSettingsOpen] = useState(false)
+  const [currentEmoji, setCurrentEmoji] = useState(emoji)
+  const [currentDisplayName, setCurrentDisplayName] = useState(displayName)
 
-  useEffect(() => {
-    if (!menuOpen) return
-    function handleClick(e: MouseEvent) {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
-        setMenuOpen(false)
-      }
-    }
-    document.addEventListener('pointerdown', handleClick)
-    return () => document.removeEventListener('pointerdown', handleClick)
-  }, [menuOpen])
+  // Avatar: emoji if set, otherwise first letter of email
+  const avatarContent = currentEmoji ?? (email[0]?.toUpperCase() || '?')
 
   async function handleSignOut() {
     const supabase = createClient()
@@ -38,49 +34,65 @@ export function NavBar({ email }: Props) {
     router.push('/login')
   }
 
+  async function handleSave(newDisplayName: string, newEmoji: string | null) {
+    const res = await fetch('/api/profile', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ display_name: newDisplayName, emoji: newEmoji }),
+    })
+    if (res.ok) {
+      setCurrentDisplayName(newDisplayName)
+      setCurrentEmoji(newEmoji)
+      setSettingsOpen(false)
+    }
+    // On failure, modal stays open — SettingsModal shows the error via the thrown rejection
+  }
+
   return (
-    <nav className="bg-slate-800 border-b border-slate-700">
-      <div className="max-w-2xl mx-auto px-6 flex items-center h-12">
-        <span className="text-white font-bold mr-6">Knocked</span>
-        <div className="flex flex-1">
-          {tabs.map((tab) => (
-            <Link
-              key={tab.href}
-              href={tab.href}
-              className={`px-4 h-12 flex items-center text-sm font-medium border-b-2 ${
-                pathname === tab.href
-                  ? 'text-blue-400 border-blue-400'
-                  : 'text-slate-400 border-transparent hover:text-white'
-              }`}
-            >
-              {tab.label}
-            </Link>
-          ))}
-        </div>
-        <div className="relative" ref={menuRef}>
-          <button
-            aria-label="Account menu"
-            aria-expanded={menuOpen}
-            onClick={() => setMenuOpen((o) => !o)}
-            className="px-3 py-1.5 rounded-lg bg-slate-700 text-slate-300 text-sm leading-none"
-          >
-            ⋯
-          </button>
-          {menuOpen && (
-            <div className="absolute right-0 top-10 bg-slate-800 border border-slate-600 rounded-xl min-w-44 shadow-xl overflow-hidden z-10">
-              <p className="px-4 py-2.5 text-xs text-slate-500 border-b border-slate-700 truncate">
-                {email}
-              </p>
-              <button
-                onClick={handleSignOut}
-                className="w-full text-left px-4 py-3 text-sm text-red-400 active:opacity-70"
+    <>
+      <nav className="bg-slate-800 border-b border-slate-700">
+        <div className="max-w-2xl mx-auto px-6 flex items-center h-12">
+          <span className="text-white font-bold mr-6">Knocked</span>
+          <div className="flex flex-1">
+            {tabs.map((tab) => (
+              <Link
+                key={tab.href}
+                href={tab.href}
+                className={`px-4 h-12 flex items-center text-sm font-medium border-b-2 ${
+                  pathname === tab.href
+                    ? 'text-blue-400 border-blue-400'
+                    : 'text-slate-400 border-transparent hover:text-white'
+                }`}
               >
-                Sign out
-              </button>
-            </div>
-          )}
+                {tab.label}
+              </Link>
+            ))}
+          </div>
+
+          {/* Avatar button */}
+          <button
+            aria-label="Open settings"
+            onClick={() => setSettingsOpen(true)}
+            className="w-11 h-11 rounded-full bg-slate-600 flex items-center justify-center text-white font-semibold text-sm active:opacity-70 shrink-0"
+          >
+            {currentEmoji ? (
+              <span className="text-lg leading-none">{currentEmoji}</span>
+            ) : (
+              <span>{email[0]?.toUpperCase() || '?'}</span>
+            )}
+          </button>
         </div>
-      </div>
-    </nav>
+      </nav>
+
+      <SettingsModal
+        open={settingsOpen}
+        email={email}
+        initialDisplayName={currentDisplayName}
+        initialEmoji={currentEmoji}
+        onClose={() => setSettingsOpen(false)}
+        onSave={handleSave}
+        onSignOut={handleSignOut}
+      />
+    </>
   )
 }
