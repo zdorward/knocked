@@ -39,7 +39,7 @@ export function SaleModal({ open, onClose, onConfirm }: Props) {
   return (
     <div className="fixed inset-0 bg-black/60 flex items-end justify-center z-50 p-4">
       <div className="bg-slate-800 rounded-2xl p-6 w-full max-w-sm border border-slate-700">
-        <h2 className="text-white text-lg font-bold mb-5">New Sale</h2>
+        <h2 className="text-white text-lg font-bold mb-5">Log Sale</h2>
 
         <div className="mb-4">
           <p className="text-slate-400 text-xs uppercase tracking-widest mb-2">

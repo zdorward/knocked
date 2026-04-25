@@ -15,7 +15,7 @@ test('does not render when open=false', () => {
 
 test('renders when open=true', () => {
   render(<SaleModal open={true} onClose={mockOnClose} onConfirm={mockOnConfirm} />)
-  expect(screen.getByText('Log Sale')).toBeInTheDocument()
+  expect(screen.getByRole('heading', { name: 'Log Sale' })).toBeInTheDocument()
   expect(screen.getByPlaceholderText('0.00')).toBeInTheDocument()
   expect(screen.getByRole('button', { name: 'Gen Pest' })).toBeInTheDocument()
   expect(screen.getByRole('button', { name: 'Mosquito' })).toBeInTheDocument()
