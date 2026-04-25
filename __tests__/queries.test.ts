@@ -130,3 +130,19 @@ test('contractStats: excludes null contract_value from avgContractValue', () => 
   // revenuePerDoor uses total value of valued sales / knocks: $300 / 1 knock = $300
   expect(result.revenuePerDoor).toBe(300)
 })
+
+test('contractStats: rounds to two decimal places', () => {
+  // 3 sales totaling $700, 3 knocks → revenuePerDoor = 700/3 = 233.33…
+  // avgContractValue = 700/3 = 233.33…
+  const events = [
+    { type: 'knock', created_at: '2024-01-01T10:00:00Z' },
+    { type: 'knock', created_at: '2024-01-01T10:01:00Z' },
+    { type: 'knock', created_at: '2024-01-01T10:02:00Z' },
+    { type: 'sale', created_at: '2024-01-01T10:03:00Z', contract_value: 100, account_type: 'gen_pest' },
+    { type: 'sale', created_at: '2024-01-01T10:04:00Z', contract_value: 200, account_type: 'mosquito' },
+    { type: 'sale', created_at: '2024-01-01T10:05:00Z', contract_value: 400, account_type: 'gen_pest' },
+  ] as any
+  const result = contractStats(events)
+  expect(result.avgContractValue).toBe(233.33)
+  expect(result.revenuePerDoor).toBe(233.33)
+})

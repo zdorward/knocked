@@ -88,7 +88,7 @@ export function contractStats(events: EventRow[]): {
     (e) => e.type === 'sale' && e.contract_value != null
   )
   const knocks = events.filter((e) => e.type === 'knock').length
-  const totalValue = valuedSales.reduce((sum, e) => sum + (e.contract_value ?? 0), 0)
+  const totalValue = valuedSales.reduce((sum, e) => sum + (e.contract_value as number), 0)
 
   const avgContractValue =
     valuedSales.length > 0
