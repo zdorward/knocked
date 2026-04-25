@@ -34,11 +34,12 @@ beforeEach(() => {
   mockPush.mockClear()
 })
 
-test('renders brand and both tabs', () => {
+test('renders brand and all tabs', () => {
   render(<NavBar email="test@example.com" />)
   expect(screen.getByText('Knocked')).toBeInTheDocument()
   expect(screen.getByRole('link', { name: 'Tracker' })).toBeInTheDocument()
   expect(screen.getByRole('link', { name: 'Stats' })).toBeInTheDocument()
+  expect(screen.getByRole('link', { name: 'Calendar' })).toBeInTheDocument()
 })
 
 test('active tab (Tracker) has blue class when on /tracker', () => {
@@ -53,6 +54,13 @@ test('active tab (Stats) has blue class when on /stats', () => {
   render(<NavBar email="test@example.com" />)
   const statsLink = screen.getByRole('link', { name: 'Stats' })
   expect(statsLink).toHaveClass('text-blue-400')
+})
+
+test('active tab (Calendar) has blue class when on /calendar', () => {
+  mockPathname.mockReturnValue('/calendar')
+  render(<NavBar email="test@example.com" />)
+  const calendarLink = screen.getByRole('link', { name: 'Calendar' })
+  expect(calendarLink).toHaveClass('text-blue-400')
 })
 
 test('dropdown is hidden by default', () => {

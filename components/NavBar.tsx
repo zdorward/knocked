@@ -12,6 +12,7 @@ interface Props {
 const tabs = [
   { label: 'Tracker', href: '/tracker' },
   { label: 'Stats', href: '/stats' },
+  { label: 'Calendar', href: '/calendar' },
 ]
 
 export function NavBar({ email }: Props) {
