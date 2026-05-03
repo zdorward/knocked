@@ -1,4 +1,5 @@
 import { redirect } from 'next/navigation'
+import { cookies } from 'next/headers'
 import { createClient } from '@/lib/supabase/server'
 import {
   salesByDay,
@@ -22,6 +23,8 @@ export default async function StatsPage() {
 
   if (!user) redirect('/login')
 
+  const timeZone = cookies().get('user-tz')?.value ?? 'UTC'
+
   const { data: events } = await supabase
     .from('events')
     .select('type, created_at, contract_value')
@@ -32,10 +35,10 @@ export default async function StatsPage() {
 
   const rates = lifetimeConversionRates(allEvents)
   const { avgContractValue, revenuePerDoor } = contractStats(allEvents)
-  const byDay = salesByDay(allEvents)
-  const byHour = salesByHour(allEvents)
-  const byDow = salesByDow(allEvents)
-  const byWeek = conversionRatesByWeek(allEvents)
+  const byDay = salesByDay(allEvents, timeZone)
+  const byHour = salesByHour(allEvents, timeZone)
+  const byDow = salesByDow(allEvents, timeZone)
+  const byWeek = conversionRatesByWeek(allEvents, timeZone)
 
   return (
     <>
