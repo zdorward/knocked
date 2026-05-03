@@ -55,7 +55,7 @@ export function EditContractModal({ sale, onClose, onSave }: Props) {
         <div className="mb-4">
           <p className="text-slate-400 text-xs uppercase tracking-widest mb-2">Account Type</p>
           <div className="bg-slate-900 rounded-xl px-4 py-3 text-slate-300 text-sm font-semibold">
-            {ACCOUNT_TYPE_LABELS[sale.account_type ?? ''] ?? sale.account_type}
+            {sale.account_type ? ACCOUNT_TYPE_LABELS[sale.account_type] : '—'}
           </div>
         </div>
 

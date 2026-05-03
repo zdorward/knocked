@@ -13,7 +13,9 @@ interface SaleGroup {
 
 function formatDayLabel(dateStr: string): string {
   const today = new Date().toLocaleDateString('en-CA')
-  const yesterday = new Date(Date.now() - 86400000).toLocaleDateString('en-CA')
+  const d = new Date()
+  d.setDate(d.getDate() - 1)
+  const yesterday = d.toLocaleDateString('en-CA')
   if (dateStr === today) return 'Today'
   if (dateStr === yesterday) return 'Yesterday'
   const [year, month, day] = dateStr.split('-').map(Number)
@@ -48,11 +50,16 @@ interface Props {
 export function SalesClient({ initialSales }: Props) {
   const [sales, setSales] = useState<SaleRow[]>(initialSales)
   const [editingSale, setEditingSale] = useState<SaleRow | null>(null)
+  const [saveError, setSaveError] = useState<string | null>(null)
+
+  const [expanded, setExpanded] = useState<Set<string>>(
+    () => {
+      const initial = groupByDay(initialSales)
+      return new Set(initial[0] ? [initial[0].dateStr] : [])
+    }
+  )
 
   const groups = groupByDay(sales)
-  const [expanded, setExpanded] = useState<Set<string>>(
-    () => new Set(groups[0] ? [groups[0].dateStr] : [])
-  )
 
   function toggleGroup(dateStr: string) {
     setExpanded((prev) => {
@@ -78,6 +85,7 @@ export function SalesClient({ initialSales }: Props) {
 
     if (!res.ok && originalSale) {
       setSales((prev) => prev.map((s) => (s.id === id ? originalSale : s)))
+      setSaveError('Failed to save. Please try again.')
     }
   }
 
@@ -89,6 +97,9 @@ export function SalesClient({ initialSales }: Props) {
 
   return (
     <>
+      {saveError && (
+        <p className="text-red-400 text-sm text-center mb-2">{saveError}</p>
+      )}
       <div className="flex flex-col gap-3 pt-4">
         {groups.map((group) => {
           const isOpen = expanded.has(group.dateStr)
