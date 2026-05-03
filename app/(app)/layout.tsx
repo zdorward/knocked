@@ -1,4 +1,5 @@
 import { NavBar } from '@/components/NavBar'
+import { TimezoneSync } from '@/components/TimezoneSync'
 import { createClient } from '@/lib/supabase/server'
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
@@ -17,6 +18,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 
   return (
     <div className="min-h-dvh bg-slate-900 flex flex-col">
+      <TimezoneSync />
       <NavBar
         email={user?.email ?? ''}
         displayName={profile?.display_name ?? ''}
