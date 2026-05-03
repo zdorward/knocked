@@ -52,6 +52,17 @@ test('renders brand and all tabs', () => {
   expect(screen.getByRole('link', { name: 'Calendar' })).toBeInTheDocument()
 })
 
+test('renders Sales tab', () => {
+  render(<NavBar {...defaultProps} />)
+  expect(screen.getByRole('link', { name: 'Sales' })).toBeInTheDocument()
+})
+
+test('active tab (Sales) has blue class when on /sales', () => {
+  mockPathname.mockReturnValue('/sales')
+  render(<NavBar {...defaultProps} />)
+  expect(screen.getByRole('link', { name: 'Sales' })).toHaveClass('text-blue-400')
+})
+
 test('active tab (Tracker) has blue class when on /tracker', () => {
   mockPathname.mockReturnValue('/tracker')
   render(<NavBar {...defaultProps} />)

@@ -16,6 +16,7 @@ const tabs = [
   { label: 'Tracker', href: '/tracker' },
   { label: 'Stats', href: '/stats' },
   { label: 'Calendar', href: '/calendar' },
+  { label: 'Sales', href: '/sales' },
 ]
 
 export function NavBar({ email, displayName, emoji }: Props) {
