@@ -1,4 +1,5 @@
 import { redirect } from 'next/navigation'
+import { cookies } from 'next/headers'
 import { createClient } from '@/lib/supabase/server'
 import { CalendarClient } from '@/components/CalendarClient'
 
@@ -13,10 +14,15 @@ export default async function CalendarPage({ searchParams }: Props) {
   } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
-  // Parse ?month=YYYY-MM, fall back to current UTC month
+  const timeZone = cookies().get('user-tz')?.value ?? 'UTC'
+
+  // Compute current local year/month using the user's timezone
   const now = new Date()
-  let year = now.getUTCFullYear()
-  let month = now.getUTCMonth() + 1 // 1–12
+  const localDateStr = new Intl.DateTimeFormat('en-CA', { timeZone }).format(now)
+  const [defaultYear, defaultMonth] = localDateStr.split('-').map(Number)
+
+  let year = defaultYear
+  let month = defaultMonth // 1–12
 
   const param = searchParams.month
   if (param && /^\d{4}-\d{2}$/.test(param)) {

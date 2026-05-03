@@ -8,7 +8,7 @@ interface Props {
   events: EventRow[]
   year: number
   month: number  // 1–12
-  today?: string // ISO date string "YYYY-MM-DD", defaults to current UTC date
+  today?: string // ISO date string "YYYY-MM-DD", defaults to current local date
 }
 
 const DOW_LABELS = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT']
@@ -19,9 +19,10 @@ const MONTH_NAMES = [
 
 export function CalendarClient({ events, year, month, today: todayProp }: Props) {
   const router = useRouter()
-  const byDay = eventsByDay(events)
+  const browserTz = Intl.DateTimeFormat().resolvedOptions().timeZone
+  const byDay = eventsByDay(events, browserTz)
 
-  const todayStr = todayProp ?? new Date().toISOString().split('T')[0]
+  const todayStr = todayProp ?? new Date().toLocaleDateString('en-CA')
   const todayYear = parseInt(todayStr.split('-')[0])
   const todayMonth = parseInt(todayStr.split('-')[1]) // 1–12
   const isCurrentMonth = year === todayYear && month === todayMonth
