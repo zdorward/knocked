@@ -44,26 +44,26 @@ function makeRequest(body: unknown) {
 }
 
 test('PATCH returns 400 for missing contract_value', async () => {
-  const res = await PATCH(makeRequest({}), { params: { id: 'event-abc' } })
+  const res = await PATCH(makeRequest({}), { params: Promise.resolve({ id: 'event-abc' }) })
   expect(res.status).toBe(400)
   const body = await res.json()
   expect(body.error).toBe('contract_value must be a positive number')
 })
 
 test('PATCH returns 400 for zero contract_value', async () => {
-  const res = await PATCH(makeRequest({ contract_value: 0 }), { params: { id: 'event-abc' } })
+  const res = await PATCH(makeRequest({ contract_value: 0 }), { params: Promise.resolve({ id: 'event-abc' }) })
   expect(res.status).toBe(400)
   const body = await res.json()
   expect(body.error).toBe('contract_value must be a positive number')
 })
 
 test('PATCH returns 400 for negative contract_value', async () => {
-  const res = await PATCH(makeRequest({ contract_value: -50 }), { params: { id: 'event-abc' } })
+  const res = await PATCH(makeRequest({ contract_value: -50 }), { params: Promise.resolve({ id: 'event-abc' }) })
   expect(res.status).toBe(400)
 })
 
 test('PATCH returns 400 for string contract_value', async () => {
-  const res = await PATCH(makeRequest({ contract_value: '299' }), { params: { id: 'event-abc' } })
+  const res = await PATCH(makeRequest({ contract_value: '299' }), { params: Promise.resolve({ id: 'event-abc' }) })
   expect(res.status).toBe(400)
 })
 
@@ -73,7 +73,7 @@ test('PATCH returns 400 on malformed JSON', async () => {
     body: 'not-json',
     headers: { 'Content-Type': 'application/json' },
   })
-  const res = await PATCH(req, { params: { id: 'event-abc' } })
+  const res = await PATCH(req, { params: Promise.resolve({ id: 'event-abc' }) })
   expect(res.status).toBe(400)
 })
 
@@ -82,18 +82,18 @@ test('PATCH returns 403 when event belongs to a different user', async () => {
     data: { user_id: 'other-user' },
     error: null,
   })
-  const res = await PATCH(makeRequest({ contract_value: 299 }), { params: { id: 'event-abc' } })
+  const res = await PATCH(makeRequest({ contract_value: 299 }), { params: Promise.resolve({ id: 'event-abc' }) })
   expect(res.status).toBe(403)
 })
 
 test('PATCH returns 404 when event does not exist', async () => {
   mockSelectSingle.mockResolvedValueOnce({ data: null, error: null })
-  const res = await PATCH(makeRequest({ contract_value: 299 }), { params: { id: 'event-abc' } })
+  const res = await PATCH(makeRequest({ contract_value: 299 }), { params: Promise.resolve({ id: 'event-abc' }) })
   expect(res.status).toBe(404)
 })
 
 test('PATCH updates contract_value and returns success', async () => {
-  const res = await PATCH(makeRequest({ contract_value: 299 }), { params: { id: 'event-abc' } })
+  const res = await PATCH(makeRequest({ contract_value: 299 }), { params: Promise.resolve({ id: 'event-abc' }) })
   expect(res.status).toBe(200)
   expect(await res.json()).toEqual({ success: true })
 })

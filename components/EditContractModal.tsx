@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { type SaleRow } from '@/lib/types'
+import { type SaleRow, type AccountType } from '@/lib/types'
 
 interface Props {
   sale: SaleRow | null
@@ -9,7 +9,7 @@ interface Props {
   onSave: (id: string, contractValue: number) => void
 }
 
-const ACCOUNT_TYPE_LABELS: Record<string, string> = {
+const ACCOUNT_TYPE_LABELS: Record<AccountType, string> = {
   gen_pest: 'Gen Pest',
   mosquito: 'Mosquito',
 }
