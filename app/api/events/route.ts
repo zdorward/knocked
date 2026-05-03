@@ -62,14 +62,16 @@ export async function DELETE(request: NextRequest) {
     return NextResponse.json({ error: 'Invalid type' }, { status: 400 })
   }
 
-  const today = new Date().toISOString().split('T')[0]
+  // Use a 24-hour window instead of UTC midnight so undo works correctly
+  // regardless of the user's timezone.
+  const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
 
   const { data: events } = await supabase
     .from('events')
     .select('id')
     .eq('user_id', user.id)
     .eq('type', type)
-    .gte('created_at', `${today}T00:00:00`)
+    .gte('created_at', since)
     .order('created_at', { ascending: false })
     .limit(1)
 
