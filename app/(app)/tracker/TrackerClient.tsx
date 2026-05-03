@@ -6,7 +6,7 @@ import { SaleModal } from '@/components/SaleModal'
 import { type Counts, type EventType, type AccountType } from '@/lib/types'
 
 interface Props {
-  initialCounts: Counts
+  initialEvents: { type: EventType; created_at: string }[]
   emoji: string | null
 }
 
@@ -18,8 +18,20 @@ function getGreeting(emoji: string | null): string | null {
   return null
 }
 
-export function TrackerClient({ initialCounts, emoji }: Props) {
-  const [counts, setCounts] = useState<Counts>(initialCounts)
+function todayCounts(events: { type: EventType; created_at: string }[]): Counts {
+  const today = new Date().toLocaleDateString('en-CA') // 'YYYY-MM-DD' in browser TZ
+  const todayEvents = events.filter(
+    (e) => new Date(e.created_at).toLocaleDateString('en-CA') === today
+  )
+  return {
+    knock: todayEvents.filter((e) => e.type === 'knock').length,
+    conversation: todayEvents.filter((e) => e.type === 'conversation').length,
+    sale: todayEvents.filter((e) => e.type === 'sale').length,
+  }
+}
+
+export function TrackerClient({ initialEvents, emoji }: Props) {
+  const [counts, setCounts] = useState<Counts>(() => todayCounts(initialEvents))
   const [saleModalOpen, setSaleModalOpen] = useState(false)
 
   async function handleIncrement(type: EventType) {

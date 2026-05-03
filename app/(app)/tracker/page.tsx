@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { TrackerClient } from './TrackerClient'
-import { type Counts } from '@/lib/types'
+import { type EventType } from '@/lib/types'
 
 export default async function TrackerPage() {
   const supabase = await createClient()
@@ -11,25 +11,26 @@ export default async function TrackerPage() {
 
   if (!user) redirect('/login')
 
-  const today = new Date().toISOString().split('T')[0]
+  // Fetch past 36h — wide enough to cover any timezone offset.
+  // TrackerClient filters to local-today in the browser.
+  const since = new Date(Date.now() - 36 * 60 * 60 * 1000).toISOString()
 
   const { data: events } = await supabase
     .from('events')
-    .select('type')
-    .eq('user_id', user!.id)
-    .gte('created_at', `${today}T00:00:00.000Z`)
-
-  const counts: Counts = {
-    knock: events?.filter((e) => e.type === 'knock').length ?? 0,
-    conversation: events?.filter((e) => e.type === 'conversation').length ?? 0,
-    sale: events?.filter((e) => e.type === 'sale').length ?? 0,
-  }
+    .select('type, created_at')
+    .eq('user_id', user.id)
+    .gte('created_at', since)
 
   const { data: profile } = await supabase
     .from('profiles')
     .select('emoji')
-    .eq('id', user!.id)
+    .eq('id', user.id)
     .single()
 
-  return <TrackerClient initialCounts={counts} emoji={profile?.emoji ?? null} />
+  return (
+    <TrackerClient
+      initialEvents={(events ?? []) as { type: EventType; created_at: string }[]}
+      emoji={profile?.emoji ?? null}
+    />
+  )
 }
