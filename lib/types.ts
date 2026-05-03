@@ -11,4 +11,11 @@ export interface EventRow {
   account_type?: AccountType | null
 }
 
+export interface SaleRow {
+  id: string
+  created_at: string
+  contract_value: number | null
+  account_type: AccountType | null
+}
+
 export type Counts = Record<EventType, number>
