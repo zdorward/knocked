@@ -173,3 +173,55 @@ test('eventsByDay: omits dates with no events', () => {
   expect(Object.keys(result)).toHaveLength(1)
   expect(result['2026-05-13']).toBeUndefined()
 })
+
+// Timezone-aware tests
+// 2026-06-02T02:00:00Z = Monday June 1 at 22:00 EDT (America/New_York is UTC-4 in June)
+const tzSale = [
+  { type: 'sale', created_at: '2026-06-02T02:00:00Z' },
+] as const
+
+test('salesByDay: uses local date when timeZone is provided', () => {
+  const result = salesByDay(tzSale as any, 'America/New_York')
+  expect(result).toEqual([{ day: '2026-06-01', sales: 1 }])
+})
+
+test('salesByDay: uses UTC date by default', () => {
+  const result = salesByDay(tzSale as any)
+  expect(result).toEqual([{ day: '2026-06-02', sales: 1 }])
+})
+
+test('salesByHour: uses local hour when timeZone is provided', () => {
+  const result = salesByHour(tzSale as any, 'America/New_York')
+  // 02:00 UTC = 22:00 EDT
+  expect(result).toContainEqual({ hour: 22, sales: 1 })
+})
+
+test('salesByHour: uses UTC hour by default', () => {
+  const result = salesByHour(tzSale as any)
+  expect(result).toContainEqual({ hour: 2, sales: 1 })
+})
+
+test('salesByDow: uses local day-of-week when timeZone is provided', () => {
+  const result = salesByDow(tzSale as any, 'America/New_York')
+  // 02:00 UTC on Tuesday June 2 = 22:00 Monday June 1 in EDT
+  const mon = result.find((r) => r.label === 'Mon')!
+  const tue = result.find((r) => r.label === 'Tue')!
+  expect(mon.sales).toBe(1)
+  expect(tue.sales).toBe(0)
+})
+
+test('salesByDow: uses UTC day-of-week by default', () => {
+  const result = salesByDow(tzSale as any)
+  const tue = result.find((r) => r.label === 'Tue')!
+  expect(tue.sales).toBe(1)
+})
+
+test('eventsByDay: uses local date when timeZone is provided', () => {
+  const events = [
+    { type: 'knock', created_at: '2026-06-02T02:00:00Z' },
+  ] as any
+  const result = eventsByDay(events, 'America/New_York')
+  // Local date is June 1 in EDT
+  expect(result['2026-06-01']).toEqual({ knock: 1, conversation: 0, sale: 0 })
+  expect(result['2026-06-02']).toBeUndefined()
+})

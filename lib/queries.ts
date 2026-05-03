@@ -2,11 +2,35 @@ import { type Counts, type EventRow } from '@/lib/types'
 
 const DOW_LABELS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
-export function salesByDay(events: EventRow[]): { day: string; sales: number }[] {
+function localDate(isoString: string, timeZone: string): string {
+  return new Intl.DateTimeFormat('en-CA', { timeZone }).format(new Date(isoString))
+}
+
+function localHour(isoString: string, timeZone: string): number {
+  const h = parseInt(
+    new Intl.DateTimeFormat('en-US', { timeZone, hour: 'numeric', hour12: false }).format(
+      new Date(isoString)
+    ),
+    10
+  )
+  return h % 24 // guard against "24" returned by some Intl implementations at midnight
+}
+
+function localDow(isoString: string, timeZone: string): number {
+  const dayName = new Intl.DateTimeFormat('en-US', { timeZone, weekday: 'short' }).format(
+    new Date(isoString)
+  )
+  return DOW_LABELS.indexOf(dayName)
+}
+
+export function salesByDay(
+  events: EventRow[],
+  timeZone = 'UTC'
+): { day: string; sales: number }[] {
   const sales = events.filter((e) => e.type === 'sale')
   const map = new Map<string, number>()
   for (const e of sales) {
-    const day = e.created_at.split('T')[0]
+    const day = localDate(e.created_at, timeZone)
     map.set(day, (map.get(day) ?? 0) + 1)
   }
   return Array.from(map.entries())
@@ -14,11 +38,14 @@ export function salesByDay(events: EventRow[]): { day: string; sales: number }[]
     .sort((a, b) => a.day.localeCompare(b.day))
 }
 
-export function salesByHour(events: EventRow[]): { hour: number; sales: number }[] {
+export function salesByHour(
+  events: EventRow[],
+  timeZone = 'UTC'
+): { hour: number; sales: number }[] {
   const sales = events.filter((e) => e.type === 'sale')
   const map = new Map<number, number>()
   for (const e of sales) {
-    const hour = new Date(e.created_at).getUTCHours()
+    const hour = localHour(e.created_at, timeZone)
     map.set(hour, (map.get(hour) ?? 0) + 1)
   }
   return Array.from(map.entries())
@@ -27,29 +54,33 @@ export function salesByHour(events: EventRow[]): { hour: number; sales: number }
 }
 
 export function salesByDow(
-  events: EventRow[]
+  events: EventRow[],
+  timeZone = 'UTC'
 ): { dow: number; label: string; sales: number }[] {
   const sales = events.filter((e) => e.type === 'sale')
   const map = new Map<number, number>()
   for (const e of sales) {
-    const dow = new Date(e.created_at).getUTCDay()
-    map.set(dow, (map.get(dow) ?? 0) + 1)
+    const dow = localDow(e.created_at, timeZone)
+    if (dow !== -1) map.set(dow, (map.get(dow) ?? 0) + 1)
   }
   return DOW_LABELS.map((label, dow) => ({ dow, label, sales: map.get(dow) ?? 0 }))
 }
 
 export function conversionRatesByWeek(
-  events: EventRow[]
+  events: EventRow[],
+  timeZone = 'UTC'
 ): { week: string; knockToSale: number; convoToSale: number }[] {
   const map = new Map<string, { knocks: number; convos: number; sales: number }>()
 
   for (const e of events) {
-    const date = new Date(e.created_at)
-    const dow = date.getUTCDay()
-    const diff = dow === 0 ? -6 : 1 - dow // Shift so Monday = start of week
-    const monday = new Date(date)
-    monday.setUTCDate(date.getUTCDate() + diff)
-    const week = monday.toISOString().split('T')[0]
+    const d = localDate(e.created_at, timeZone) // 'YYYY-MM-DD' in local time
+    const [year, month, day] = d.split('-').map(Number)
+    // Use UTC Date for day-of-week arithmetic on the local date
+    const dateUtc = new Date(Date.UTC(year, month - 1, day))
+    const dow = dateUtc.getUTCDay()
+    const diff = dow === 0 ? -6 : 1 - dow // shift so Monday = start of week
+    dateUtc.setUTCDate(dateUtc.getUTCDate() + diff)
+    const week = dateUtc.toISOString().split('T')[0]
 
     if (!map.has(week)) map.set(week, { knocks: 0, convos: 0, sales: 0 })
     const entry = map.get(week)!
@@ -84,9 +115,7 @@ export function contractStats(events: EventRow[]): {
   avgContractValue: number
   revenuePerDoor: number
 } {
-  const valuedSales = events.filter(
-    (e) => e.type === 'sale' && e.contract_value != null
-  )
+  const valuedSales = events.filter((e) => e.type === 'sale' && e.contract_value != null)
   const knocks = events.filter((e) => e.type === 'knock').length
   const totalValue = valuedSales.reduce((sum, e) => sum + (e.contract_value as number), 0)
 
@@ -101,10 +130,10 @@ export function contractStats(events: EventRow[]): {
   return { avgContractValue, revenuePerDoor }
 }
 
-export function eventsByDay(events: EventRow[]): Record<string, Counts> {
+export function eventsByDay(events: EventRow[], timeZone = 'UTC'): Record<string, Counts> {
   const result: Record<string, Counts> = {}
   for (const e of events) {
-    const day = new Date(e.created_at).toISOString().split('T')[0]
+    const day = localDate(e.created_at, timeZone)
     if (!result[day]) result[day] = { knock: 0, conversation: 0, sale: 0 }
     result[day][e.type]++
   }
